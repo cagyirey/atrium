@@ -1,14 +1,24 @@
+use std::ops::Sub;
+use std::str::FromStr;
+
 use anyhow::{anyhow, Result};
 use atrium_api::app::bsky::feed::post::Record;
 use atrium_api::com::atproto::sync::subscribe_repos::{Commit, NSID};
 use atrium_api::types::{CidLink, Collection};
 use chrono::Local;
+use cid::{Cid, CidGeneric};
+use elasticsearch::auth::Credentials;
+use elasticsearch::http::transport::{SingleNodeConnectionPool, Transport, TransportBuilder};
+use elasticsearch::http::Url;
+use elasticsearch::{CreateParts, Elasticsearch, IndexParts};
 use firehose::stream::frames::Frame;
 use firehose::subscription::{CommitHandler, Subscription};
 use futures::StreamExt;
 use tokio::net::TcpStream;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::{connect_async, MaybeTlsStream, WebSocketStream};
+use serde_ipld_dagcbor::{from_slice, to_vec};
+use serde_json::{from_str, json, to_string};
 
 struct RepoSubscription {
     stream: WebSocketStream<MaybeTlsStream<TcpStream>>,
@@ -44,7 +54,18 @@ impl Subscription for RepoSubscription {
     }
 }
 
-struct Firehose;
+struct Firehose {
+    elastic_client: Elasticsearch
+}
+
+impl Firehose {
+    async fn new(url: &str, username: &str, password: &str) -> Result<Self,  Box<dyn std::error::Error>> {
+        let credentials = Credentials::Basic(username.to_string(), password.to_string());
+        let conn_pool = SingleNodeConnectionPool::new(Url::parse(&url)?);
+        let transport = TransportBuilder::new(conn_pool).auth(credentials).disable_proxy().cert_validation(elasticsearch::cert::CertificateValidation::None).build()?;
+        Ok(Firehose { elastic_client: Elasticsearch::new(transport) })
+    }
+}
 
 impl CommitHandler for Firehose {
     async fn handle_commit(&self, commit: &Commit) -> Result<()> {
@@ -54,16 +75,22 @@ impl CommitHandler for Firehose {
                 continue;
             }
             let (items, _) = rs_car::car_read_all(&mut commit.blocks.as_slice(), true).await?;
-            if let Some((_, item)) = items.iter().find(|(cid, _)| Some(CidLink(*cid)) == op.cid) {
+            if let Some((_, item)) = items.iter().find(|(cid, _)| Some(CidLink(Cid::from_str(&cid.to_string()).unwrap())) == op.cid) {
                 let record = serde_ipld_dagcbor::from_reader::<Record, _>(&mut item.as_slice())?;
-                println!(
-                    "{} - {}",
-                    record.created_at.as_ref().with_timezone(&Local),
-                    commit.repo.as_str()
-                );
-                for line in record.text.split('\n') {
-                    println!("  {line}");
-                }
+                let result = self.elastic_client.index(IndexParts::IndexId(&commit.repo.as_str().trim_start_matches("did:plc:"), &to_string(&op.cid)?))
+                    .body(json!(record)).send().await?;
+
+                
+                
+                //println!("{}", )
+                // println!(
+                //     "{} - {}",
+                //     record.created_at.as_ref().with_timezone(&Local),
+                //     commit.repo.as_str()
+                // );
+                // for line in record.text.split('\n') {
+                //     println!("  {line}");
+                // }
             } else {
                 return Err(anyhow!(
                     "FAILED: could not find item with operation cid {:?} out of {} items",
@@ -78,8 +105,9 @@ impl CommitHandler for Firehose {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let firehose = Firehose::new("https://localhost:52551/", "elastic", "PASSWORD").await?;
     RepoSubscription::new("bsky.network")
         .await?
-        .run(Firehose)
+        .run(firehose)
         .await
 }
