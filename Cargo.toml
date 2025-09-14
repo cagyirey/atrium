@@ -3,13 +3,16 @@ members = [
     "atrium-api",
     "atrium-common",
     "atrium-crypto",
+    "atrium-repo",
     "atrium-xrpc",
     "atrium-xrpc-client",
-    "atrium-oauth/identity",
-    "atrium-oauth/oauth-client",
+    "atrium-identity",
+    "atrium-oauth",
     "bsky-cli",
     "bsky-sdk",
+    "examples/concurrent",
     "examples/firehose",
+    "examples/video",
 ]
 
 resolver = "2"
@@ -17,18 +20,22 @@ resolver = "2"
 [workspace.package]
 edition = "2021"
 rust-version = "1.75"
-repository = "https://github.com/sugyan/atrium"
+repository = "https://github.com/atrium-rs/atrium"
 license = "MIT"
 keywords = ["atproto", "bluesky"]
 
 [workspace.dependencies]
 # Intra-workspace dependencies
-atrium-api = { version = "0.24.8", path = "atrium-api", default-features = false }
-atrium-common = { version = "0.1.0", path = "atrium-common" }
-atrium-identity = { version = "0.1.0", path = "atrium-oauth/identity" }
-atrium-xrpc = { version = "0.12.0", path = "atrium-xrpc" }
-atrium-xrpc-client = { version = "0.5.10", path = "atrium-xrpc-client" }
-bsky-sdk = { version = "0.1.13", path = "bsky-sdk" }
+atrium-api = { version = "0.25.5", path = "atrium-api", default-features = false }
+atrium-common = { version = "0.1.2", path = "atrium-common" }
+atrium-crypto = { version = "0.1.2", path = "atrium-crypto" }
+atrium-identity = { version = "0.1.6", path = "atrium-identity" }
+atrium-xrpc = { version = "0.12.3", path = "atrium-xrpc" }
+atrium-xrpc-client = { version = "0.5.14", path = "atrium-xrpc-client" }
+bsky-sdk = { version = "0.1.21", path = "bsky-sdk" }
+
+# async in streams
+async-stream = "0.3"
 
 # DAG-CBOR codec
 ipld-core = { version = "0.4.1", default-features = false, features = ["std"] }
@@ -45,6 +52,7 @@ serde = "1.0.202"
 serde_bytes = "0.11.9"
 serde_html_form = "0.2.6"
 serde_json = "1.0.125"
+unsigned-varint = "0.8"
 
 # Cryptography
 ecdsa = "0.16.9"
@@ -59,12 +67,13 @@ sha2 = "0.10.8"
 # Networking
 dashmap = "6.1.0"
 futures = { version = "0.3.30", default-features = false, features = ["alloc"] }
-hickory-proto = { version = "0.24.1", default-features = false }
+hickory-proto = { version = "0.24.3", default-features = false }
 hickory-resolver = "0.24.1"
 http = "1.1.0"
 lru = "0.12.4"
 moka = "0.12.8"
-tokio = { version = "1.39", default-features = false }
+tokio = { version = "1.44", default-features = false }
+tokio-util = "0.7"
 
 # HTTP client integrations
 isahc = "1.7.2"
@@ -80,7 +89,7 @@ dirs = "5.0.1"
 
 # Testing
 gloo-timers = { version = "0.3.0", features = ["futures"] }
-mockito = "1.4"
+mockito = "=1.6.1"
 
 # WebAssembly
 wasm-bindgen-test = "0.3.41"
@@ -89,3 +98,10 @@ bumpalo = "~3.14.0"
 
 # Code generation
 trait-variant = "0.1.2"
+
+# Others
+base64ct = "=1.6.0"
+idna_adapter = "=1.2.0"
+litemap = "=0.7.4"
+native-tls = "=0.2.13"
+zerofrom = "=0.1.5"

@@ -20,10 +20,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: crates
+      - name: Install Rust 1.75.0
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: 1.75.0
       # We use a synthetic crate to ensure no dev-dependencies are enabled, which can
       # be incompatible with some of these targets.
       - name: Create synthetic crate for testing
-        run: cargo init --lib ci-build
+        run: cargo init --edition 2021 --lib ci-build
       - name: Copy Rust version into synthetic crate
         run: cp crates/rust-toolchain.toml ci-build/
       - name: Copy patch directives into synthetic crate
@@ -66,5 +70,5 @@ jobs:
       - run: wasm-pack test --node atrium-api
       - run: wasm-pack test --node atrium-xrpc
       - run: wasm-pack test --node atrium-xrpc-client
-      - run: wasm-pack test --node atrium-oauth/identity
+      - run: wasm-pack test --node atrium-identity
       - run: wasm-pack test --node atrium-common

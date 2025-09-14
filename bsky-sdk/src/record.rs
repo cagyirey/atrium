@@ -1,22 +1,22 @@
 //! Record operations.
 mod agent;
 
-use std::future::Future;
-
 use crate::error::{Error, Result};
 use crate::BskyAgent;
-use atrium_api::agent::store::SessionStore;
+use atrium_api::agent::atp_agent::store::AtpSessionStore;
 use atrium_api::com::atproto::repo::{
     create_record, delete_record, get_record, list_records, put_record,
 };
-use atrium_api::types::{Collection, LimitedNonZeroU8, TryIntoUnknown};
+use atrium_api::types::{string::RecordKey, Collection, LimitedNonZeroU8, TryIntoUnknown};
 use atrium_api::xrpc::XrpcClient;
+use std::future::Future;
 
 #[cfg_attr(not(target_arch = "wasm32"), trait_variant::make(Send))]
 pub trait Record<T, S>
 where
     T: XrpcClient + Send + Sync,
-    S: SessionStore + Send + Sync,
+    S: AtpSessionStore + Send + Sync,
+    S::Error: std::error::Error + Send + Sync + 'static,
 {
     fn list(
         agent: &BskyAgent<T, S>,
@@ -25,18 +25,18 @@ where
     ) -> impl Future<Output = Result<list_records::Output>>;
     fn get(
         agent: &BskyAgent<T, S>,
-        rkey: String,
+        rkey: RecordKey,
     ) -> impl Future<Output = Result<get_record::Output>>;
     fn put(
         self,
         agent: &BskyAgent<T, S>,
-        rkey: String,
+        rkey: RecordKey,
     ) -> impl Future<Output = Result<put_record::Output>>;
     fn create(self, agent: &BskyAgent<T, S>)
         -> impl Future<Output = Result<create_record::Output>>;
     fn delete(
         agent: &BskyAgent<T, S>,
-        rkey: String,
+        rkey: RecordKey,
     ) -> impl Future<Output = Result<delete_record::Output>>;
 }
 
@@ -45,7 +45,8 @@ macro_rules! record_impl {
         impl<T, S> Record<T, S> for $record
         where
             T: XrpcClient + Send + Sync,
-            S: SessionStore + Send + Sync,
+            S: AtpSessionStore + Send + Sync,
+            S::Error: std::error::Error + Send + Sync + 'static,
         {
             async fn list(
                 agent: &BskyAgent<T, S>,
@@ -65,14 +66,12 @@ macro_rules! record_impl {
                             limit,
                             repo: session.data.did.into(),
                             reverse: None,
-                            rkey_end: None,
-                            rkey_start: None,
                         }
                         .into(),
                     )
                     .await?)
             }
-            async fn get(agent: &BskyAgent<T, S>, rkey: String) -> Result<get_record::Output> {
+            async fn get(agent: &BskyAgent<T, S>, rkey: RecordKey) -> Result<get_record::Output> {
                 let session = agent.get_session().await.ok_or(Error::NotLoggedIn)?;
                 Ok(agent
                     .api
@@ -93,7 +92,7 @@ macro_rules! record_impl {
             async fn put(
                 self,
                 agent: &BskyAgent<T, S>,
-                rkey: String,
+                rkey: RecordKey,
             ) -> Result<put_record::Output> {
                 let session = agent.get_session().await.ok_or(Error::NotLoggedIn)?;
                 Ok(agent
@@ -137,7 +136,7 @@ macro_rules! record_impl {
             }
             async fn delete(
                 agent: &BskyAgent<T, S>,
-                rkey: String,
+                rkey: RecordKey,
             ) -> Result<delete_record::Output> {
                 let session = agent.get_session().await.ok_or(Error::NotLoggedIn)?;
                 Ok(agent
@@ -162,7 +161,8 @@ macro_rules! record_impl {
         impl<T, S> Record<T, S> for $record_data
         where
             T: XrpcClient + Send + Sync,
-            S: SessionStore + Send + Sync,
+            S: AtpSessionStore + Send + Sync,
+            S::Error: std::error::Error + Send + Sync + 'static,
         {
             async fn list(
                 agent: &BskyAgent<T, S>,
@@ -171,13 +171,13 @@ macro_rules! record_impl {
             ) -> Result<list_records::Output> {
                 <$record>::list(agent, cursor, limit).await
             }
-            async fn get(agent: &BskyAgent<T, S>, rkey: String) -> Result<get_record::Output> {
+            async fn get(agent: &BskyAgent<T, S>, rkey: RecordKey) -> Result<get_record::Output> {
                 <$record>::get(agent, rkey).await
             }
             async fn put(
                 self,
                 agent: &BskyAgent<T, S>,
-                rkey: String,
+                rkey: RecordKey,
             ) -> Result<put_record::Output> {
                 <$record>::from(self).put(agent, rkey).await
             }
@@ -186,7 +186,7 @@ macro_rules! record_impl {
             }
             async fn delete(
                 agent: &BskyAgent<T, S>,
-                rkey: String,
+                rkey: RecordKey,
             ) -> Result<delete_record::Output> {
                 <$record>::delete(agent, rkey).await
             }
@@ -194,6 +194,11 @@ macro_rules! record_impl {
     };
 }
 
+record_impl!(
+    atrium_api::com::atproto::lexicon::Schema,
+    atrium_api::com::atproto::lexicon::schema::Record,
+    atrium_api::com::atproto::lexicon::schema::RecordData
+);
 record_impl!(
     atrium_api::app::bsky::actor::Profile,
     atrium_api::app::bsky::actor::profile::Record,
@@ -260,6 +265,11 @@ record_impl!(
     atrium_api::app::bsky::graph::starterpack::RecordData
 );
 record_impl!(
+    atrium_api::app::bsky::graph::Verification,
+    atrium_api::app::bsky::graph::verification::Record,
+    atrium_api::app::bsky::graph::verification::RecordData
+);
+record_impl!(
     atrium_api::app::bsky::labeler::Service,
     atrium_api::app::bsky::labeler::service::Record,
     atrium_api::app::bsky::labeler::service::RecordData
@@ -273,10 +283,7 @@ record_impl!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::agent::BskyAgentBuilder;
-    use crate::tests::FAKE_CID;
-    use atrium_api::agent::Session;
-    use atrium_api::com::atproto::server::create_session::OutputData;
+    use crate::{agent::tests::MockSessionStore, agent::BskyAtpAgentBuilder, tests::FAKE_CID};
     use atrium_api::types::string::Datetime;
     use atrium_api::xrpc::http::{Request, Response};
     use atrium_api::xrpc::types::Header;
@@ -319,33 +326,9 @@ mod tests {
         }
     }
 
-    struct MockSessionStore;
-
-    impl SessionStore for MockSessionStore {
-        async fn get_session(&self) -> Option<Session> {
-            Some(
-                OutputData {
-                    access_jwt: String::from("access"),
-                    active: None,
-                    did: "did:fake:handle.test".parse().expect("invalid did"),
-                    did_doc: None,
-                    email: None,
-                    email_auth_factor: None,
-                    email_confirmed: None,
-                    handle: "handle.test".parse().expect("invalid handle"),
-                    refresh_jwt: String::from("refresh"),
-                    status: None,
-                }
-                .into(),
-            )
-        }
-        async fn set_session(&self, _: Session) {}
-        async fn clear_session(&self) {}
-    }
-
     #[tokio::test]
     async fn actor_profile() -> Result<()> {
-        let agent = BskyAgentBuilder::new(MockClient).store(MockSessionStore).build().await?;
+        let agent = BskyAtpAgentBuilder::new(MockClient).store(MockSessionStore).build().await?;
         // create
         let output = atrium_api::app::bsky::actor::profile::RecordData {
             avatar: None,
@@ -370,14 +353,17 @@ mod tests {
             .into()
         );
         // delete
-        atrium_api::app::bsky::actor::profile::Record::delete(&agent, String::from("somerkey"))
-            .await?;
+        atrium_api::app::bsky::actor::profile::Record::delete(
+            &agent,
+            RecordKey::new("somerkey".into()).unwrap(),
+        )
+        .await?;
         Ok(())
     }
 
     #[tokio::test]
     async fn feed_post() -> Result<()> {
-        let agent = BskyAgentBuilder::new(MockClient).store(MockSessionStore).build().await?;
+        let agent = BskyAtpAgentBuilder::new(MockClient).store(MockSessionStore).build().await?;
         // create
         let output = atrium_api::app::bsky::feed::post::RecordData {
             created_at: Datetime::now(),
@@ -403,13 +389,17 @@ mod tests {
             .into()
         );
         // delete
-        atrium_api::app::bsky::feed::post::Record::delete(&agent, String::from("somerkey")).await?;
+        atrium_api::app::bsky::feed::post::Record::delete(
+            &agent,
+            RecordKey::new("somerkey".into()).unwrap(),
+        )
+        .await?;
         Ok(())
     }
 
     #[tokio::test]
     async fn graph_follow() -> Result<()> {
-        let agent = BskyAgentBuilder::new(MockClient).store(MockSessionStore).build().await?;
+        let agent = BskyAtpAgentBuilder::new(MockClient).store(MockSessionStore).build().await?;
         // create
         let output = atrium_api::app::bsky::graph::follow::RecordData {
             created_at: Datetime::now(),
@@ -428,8 +418,11 @@ mod tests {
             .into()
         );
         // delete
-        atrium_api::app::bsky::graph::follow::Record::delete(&agent, String::from("somerkey"))
-            .await?;
+        atrium_api::app::bsky::graph::follow::Record::delete(
+            &agent,
+            RecordKey::new("somerkey".into()).unwrap(),
+        )
+        .await?;
         Ok(())
     }
 }

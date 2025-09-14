@@ -1,7 +1,7 @@
 use crate::error::{Error, XrpcError, XrpcErrorKind};
 use crate::types::{AuthorizationToken, Header, NSID_REFRESH_SESSION};
 use crate::{InputDataOrBytes, OutputDataOrBytes, XrpcRequest};
-use http::{Method, Request, Response};
+use http::{header::WWW_AUTHENTICATE, Method, Request, Response};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fmt::Debug, future::Future};
 
@@ -131,12 +131,14 @@ where
             .headers
             .get(http::header::CONTENT_TYPE)
             .and_then(|value| value.to_str().ok())
-            .map_or(false, |content_type| content_type.starts_with("application/json"))
+            .is_some_and(|content_type| content_type.starts_with("application/json"))
         {
             Ok(OutputDataOrBytes::Data(serde_json::from_slice(&body)?))
         } else {
             Ok(OutputDataOrBytes::Bytes(body))
         }
+    } else if let Some(value) = parts.headers.get(WWW_AUTHENTICATE) {
+        Err(Error::Authentication(value.clone()))
     } else {
         Err(Error::XrpcResponse(XrpcError {
             status: parts.status,

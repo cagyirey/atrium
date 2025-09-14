@@ -1,6 +1,6 @@
 [package]
 name = "bsky-sdk"
-version = "0.1.13"
+version = "0.1.21"
 authors = ["sugyan <sugi1982+github@gmail.com>"]
 edition.workspace = true
 rust-version.workspace = true
@@ -26,8 +26,14 @@ unicode-segmentation = { version = "1.11.0", optional = true }
 trait-variant.workspace = true
 
 [dev-dependencies]
+atrium-common.workspace = true
 ipld-core.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+idna_adapter.workspace = true
+litemap.workspace = true
+native-tls.workspace = true
+zerofrom.workspace = true
 
 [features]
 default = ["default-client", "rich-text"]

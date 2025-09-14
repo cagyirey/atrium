@@ -12,7 +12,7 @@ pub type Parameters = crate::types::Object<ParametersData>;
 #[serde(rename_all = "camelCase")]
 pub struct OutputData {
     pub cid: crate::types::string::Cid,
-    pub rev: String,
+    pub rev: crate::types::string::Tid,
 }
 pub type Output = crate::types::Object<OutputData>;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]

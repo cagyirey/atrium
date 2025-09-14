@@ -6,8 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+atrium-api = { path = "../../atrium-api" }
+atrium-repo = { path = "../../atrium-repo" }
+
 anyhow = "1.0.80"
-atrium-api = { version = "0.24.8" }
+#atrium-api = { version = "0.24.8" }
 chrono = "0.4.34"
 cid = ">=0.11.1"
 futures = "0.3.30"
@@ -15,7 +18,7 @@ ipld-core = { version = "0.4.1", default-features = false, features = ["std", "s
 rs-car = "0.4.1"
 serde_ipld_dagcbor = { version = "0.6.0", default-features = false, features = ["std"] }
 serde_json = "1.0.125"
-tokio = { version = "1.36.0", features = ["full"] }
+tokio = { version = "1.44.2", features = ["full"] }
 tokio-tungstenite = { version = "0.24.0", features = ["native-tls"] }
 trait-variant = "0.1.1"
 elasticsearch = "8.16.0-alpha.1"

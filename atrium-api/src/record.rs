@@ -57,12 +57,18 @@ pub enum KnownRecord {
     AppBskyGraphStarterpack(Box<crate::app::bsky::graph::starterpack::Record>),
     #[cfg_attr(docsrs, doc(cfg(feature = "namespace-appbsky")))]
     #[cfg(feature = "namespace-appbsky")]
+    #[serde(rename = "app.bsky.graph.verification")]
+    AppBskyGraphVerification(Box<crate::app::bsky::graph::verification::Record>),
+    #[cfg_attr(docsrs, doc(cfg(feature = "namespace-appbsky")))]
+    #[cfg(feature = "namespace-appbsky")]
     #[serde(rename = "app.bsky.labeler.service")]
     AppBskyLabelerService(Box<crate::app::bsky::labeler::service::Record>),
     #[cfg_attr(docsrs, doc(cfg(feature = "namespace-chatbsky")))]
     #[cfg(feature = "namespace-chatbsky")]
     #[serde(rename = "chat.bsky.actor.declaration")]
     ChatBskyActorDeclaration(Box<crate::chat::bsky::actor::declaration::Record>),
+    #[serde(rename = "com.atproto.lexicon.schema")]
+    ComAtprotoLexiconSchema(Box<crate::com::atproto::lexicon::schema::Record>),
 }
 #[cfg_attr(docsrs, doc(cfg(feature = "namespace-appbsky")))]
 #[cfg(feature = "namespace-appbsky")]
@@ -248,6 +254,20 @@ impl From<crate::app::bsky::graph::starterpack::RecordData> for KnownRecord {
 }
 #[cfg_attr(docsrs, doc(cfg(feature = "namespace-appbsky")))]
 #[cfg(feature = "namespace-appbsky")]
+impl From<crate::app::bsky::graph::verification::Record> for KnownRecord {
+    fn from(record: crate::app::bsky::graph::verification::Record) -> Self {
+        KnownRecord::AppBskyGraphVerification(Box::new(record))
+    }
+}
+#[cfg_attr(docsrs, doc(cfg(feature = "namespace-appbsky")))]
+#[cfg(feature = "namespace-appbsky")]
+impl From<crate::app::bsky::graph::verification::RecordData> for KnownRecord {
+    fn from(record_data: crate::app::bsky::graph::verification::RecordData) -> Self {
+        KnownRecord::AppBskyGraphVerification(Box::new(record_data.into()))
+    }
+}
+#[cfg_attr(docsrs, doc(cfg(feature = "namespace-appbsky")))]
+#[cfg(feature = "namespace-appbsky")]
 impl From<crate::app::bsky::labeler::service::Record> for KnownRecord {
     fn from(record: crate::app::bsky::labeler::service::Record) -> Self {
         KnownRecord::AppBskyLabelerService(Box::new(record))
@@ -272,5 +292,15 @@ impl From<crate::chat::bsky::actor::declaration::Record> for KnownRecord {
 impl From<crate::chat::bsky::actor::declaration::RecordData> for KnownRecord {
     fn from(record_data: crate::chat::bsky::actor::declaration::RecordData) -> Self {
         KnownRecord::ChatBskyActorDeclaration(Box::new(record_data.into()))
+    }
+}
+impl From<crate::com::atproto::lexicon::schema::Record> for KnownRecord {
+    fn from(record: crate::com::atproto::lexicon::schema::Record) -> Self {
+        KnownRecord::ComAtprotoLexiconSchema(Box::new(record))
+    }
+}
+impl From<crate::com::atproto::lexicon::schema::RecordData> for KnownRecord {
+    fn from(record_data: crate::com::atproto::lexicon::schema::RecordData) -> Self {
+        KnownRecord::ComAtprotoLexiconSchema(Box::new(record_data.into()))
     }
 }

@@ -1,10 +1,66 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.34](https://github.com/atrium-rs/atrium/compare/bsky-cli-v0.1.33...bsky-cli-v0.1.34) - 2025-08-16
+
+### Other
+
+- updated the following local packages: bsky-sdk
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.1.33](https://github.com/atrium-rs/atrium/compare/bsky-cli-v0.1.32...bsky-cli-v0.1.33) - 2025-05-25
+
+### Other
+
+- updated the following local packages: bsky-sdk
+
+## [0.1.32](https://github.com/atrium-rs/atrium/compare/bsky-cli-v0.1.31...bsky-cli-v0.1.32) - 2025-04-27
+
+### Other
+
+- update Cargo.toml dependencies
+
+## [0.1.31](https://github.com/sugyan/atrium/compare/bsky-cli-v0.1.30...bsky-cli-v0.1.31) - 2025-04-02
+
+### Other
+
+- updated the following local packages: bsky-sdk
+
+## [0.1.30](https://github.com/sugyan/atrium/compare/bsky-cli-v0.1.29...bsky-cli-v0.1.30) - 2025-04-02
+
+### Added
+
+- Update generated API ([#298](https://github.com/sugyan/atrium/pull/298))
+
+## [0.1.29](https://github.com/sugyan/atrium/compare/bsky-cli-v0.1.28...bsky-cli-v0.1.29) - 2025-03-08
+
+### Other
+
+- update Cargo.lock dependencies
+
+## [0.1.28](https://github.com/sugyan/atrium/compare/bsky-cli-v0.1.27...bsky-cli-v0.1.28) - 2025-02-17
+
+### Other
+
+- update Cargo.toml dependencies
+
+## [0.1.27](https://github.com/sugyan/atrium/compare/bsky-cli-v0.1.26...bsky-cli-v0.1.27) - 2025-01-21
+
+### Other
+
+- update schema based on current lexicon ([#276](https://github.com/sugyan/atrium/pull/276))
 
 ## [0.1.26](https://github.com/sugyan/atrium/compare/bsky-cli-v0.1.25...bsky-cli-v0.1.26) - 2024-11-19
 

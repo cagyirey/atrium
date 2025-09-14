@@ -1,10 +1,70 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.21](https://github.com/atrium-rs/atrium/compare/bsky-sdk-v0.1.20...bsky-sdk-v0.1.21) - 2025-08-16
+
+### Other
+
+- updated the following local packages: atrium-api
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.1.20](https://github.com/atrium-rs/atrium/compare/bsky-sdk-v0.1.19...bsky-sdk-v0.1.20) - 2025-05-25
+
+### Other
+
+- updated the following local packages: atrium-api
+
+## [0.1.19](https://github.com/atrium-rs/atrium/compare/bsky-sdk-v0.1.18...bsky-sdk-v0.1.19) - 2025-04-27
+
+### Added
+
+- Update API, based on the latest lexicon schemas ([#306](https://github.com/atrium-rs/atrium/pull/306))
+
+### Other
+
+- Replace repository owner ([#301](https://github.com/atrium-rs/atrium/pull/301))
+
+## [0.1.18](https://github.com/sugyan/atrium/compare/bsky-sdk-v0.1.17...bsky-sdk-v0.1.18) - 2025-04-02
+
+### Other
+
+- updated the following local packages: atrium-xrpc-client, atrium-api
+
+## [0.1.17](https://github.com/sugyan/atrium/compare/bsky-sdk-v0.1.16...bsky-sdk-v0.1.17) - 2025-04-02
+
+### Added
+
+- Update generated API ([#298](https://github.com/sugyan/atrium/pull/298))
+
+## [0.1.16](https://github.com/sugyan/atrium/compare/bsky-sdk-v0.1.15...bsky-sdk-v0.1.16) - 2025-02-17
+
+### Added
+
+- Agent rework (#282)
+
+## [0.1.15](https://github.com/sugyan/atrium/compare/bsky-sdk-v0.1.14...bsky-sdk-v0.1.15) - 2025-01-21
+
+### Other
+
+- update schema based on current lexicon ([#276](https://github.com/sugyan/atrium/pull/276))
+
+## [0.1.14](https://github.com/sugyan/atrium/compare/bsky-sdk-v0.1.13...bsky-sdk-v0.1.14) - 2024-12-10
+
+### Other
+
+- updated the following local packages: atrium-api
 
 ## [0.1.13](https://github.com/sugyan/atrium/compare/bsky-sdk-v0.1.12...bsky-sdk-v0.1.13) - 2024-11-19
 

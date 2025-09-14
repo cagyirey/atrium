@@ -1,10 +1,85 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.25.5](https://github.com/atrium-rs/atrium/compare/atrium-api-v0.25.4...atrium-api-v0.25.5) - 2025-08-16
+
+### Fixed
+
+- Add explicit lifetime annotation to Language::as_ref return type ([#323](https://github.com/atrium-rs/atrium/pull/323))
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.25.4](https://github.com/atrium-rs/atrium/compare/atrium-api-v0.25.3...atrium-api-v0.25.4) - 2025-05-25
+
+### Other
+
+- allow nonleading digits in NSID name segment ([#312](https://github.com/atrium-rs/atrium/pull/312))
+
+## [0.25.3](https://github.com/atrium-rs/atrium/compare/atrium-api-v0.25.2...atrium-api-v0.25.3) - 2025-04-27
+
+### Added
+
+- Update API, based on the latest lexicon schemas ([#306](https://github.com/atrium-rs/atrium/pull/306))
+- Allow bounded numbers to be deserialized from strings ([#296](https://github.com/atrium-rs/atrium/pull/296))
+
+### Other
+
+- Replace repository owner ([#301](https://github.com/atrium-rs/atrium/pull/301))
+
+## [0.25.2](https://github.com/sugyan/atrium/compare/atrium-api-v0.25.1...atrium-api-v0.25.2) - 2025-04-02
+
+### Other
+
+- updated the following local packages: atrium-xrpc-client
+
+## [0.25.1](https://github.com/sugyan/atrium/compare/atrium-api-v0.25.0...atrium-api-v0.25.1) - 2025-04-02
+
+### Added
+
+- Update generated API ([#298](https://github.com/sugyan/atrium/pull/298))
+- OAuth session ([#243](https://github.com/sugyan/atrium/pull/243))
+
+## [0.25.0](https://github.com/sugyan/atrium/compare/atrium-api-v0.24.10...atrium-api-v0.25.0) - 2025-02-17
+
+### Added
+
+- Add `Tid::now` and `Tid::from_datetime` constructors (#277)
+
+### Changed
+
+- Agent rework (#282)
+  - Add `SessionManager` trait in preparation for OAuthSession addition.
+  - Add `Agent` struct created from `SessionManager`.
+  - Move `AtpAgent` as a wrapper for Agent created from `CredentialSession`.
+  - `bsky-sdk` was also modified with the above changes.
+
+
+## [0.24.10](https://github.com/sugyan/atrium/compare/atrium-api-v0.24.9...atrium-api-v0.24.10) - 2025-01-21
+
+### Other
+
+- update schema based on current lexicon ([#276](https://github.com/sugyan/atrium/pull/276))
+
+## [0.24.9](https://github.com/sugyan/atrium/compare/atrium-api-v0.24.8...atrium-api-v0.24.9) - 2024-12-10
+
+### Added
+
+- Extend DidDocument with useful methods (#265)
+
+### Other
+
+- Add docs to API
 
 ## [0.24.8](https://github.com/sugyan/atrium/compare/atrium-api-v0.24.7...atrium-api-v0.24.8) - 2024-11-19
 

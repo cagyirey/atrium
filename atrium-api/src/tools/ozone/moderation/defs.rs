@@ -29,6 +29,27 @@ pub struct AccountHostingData {
     pub updated_at: core::option::Option<crate::types::string::Datetime>,
 }
 pub type AccountHosting = crate::types::Object<AccountHostingData>;
+///Statistics about a particular account subject
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct AccountStatsData {
+    ///Total number of appeals against a moderation action on the account
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub appeal_count: core::option::Option<i64>,
+    ///Number of times the account was escalated
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub escalate_count: core::option::Option<i64>,
+    ///Total number of reports on the account
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub report_count: core::option::Option<i64>,
+    ///Number of times the account was suspended
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub suspend_count: core::option::Option<i64>,
+    ///Number of times the account was taken down
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub takedown_count: core::option::Option<i64>,
+}
+pub type AccountStats = crate::types::Object<AccountStatsData>;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct BlobViewData {
@@ -67,15 +88,19 @@ pub type ImageDetails = crate::types::Object<ImageDetailsData>;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct ModEventAcknowledgeData {
+    ///If true, all other reports on content authored by this account will be resolved (acknowledged).
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub acknowledge_account_subjects: core::option::Option<bool>,
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub comment: core::option::Option<String>,
 }
 pub type ModEventAcknowledge = crate::types::Object<ModEventAcknowledgeData>;
-///Add a comment to a subject
+///Add a comment to a subject. An empty comment will clear any previously set sticky comment.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct ModEventCommentData {
-    pub comment: String,
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub comment: core::option::Option<String>,
     ///Make the comment persistent on the subject
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub sticky: core::option::Option<bool>,
@@ -117,6 +142,9 @@ pub struct ModEventLabelData {
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub comment: core::option::Option<String>,
     pub create_label_vals: Vec<String>,
+    ///Indicates how long the label will remain on the subject. Only applies on labels that are being added.
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub duration_in_hours: core::option::Option<i64>,
     pub negate_label_vals: Vec<String>,
 }
 pub type ModEventLabel = crate::types::Object<ModEventLabelData>;
@@ -141,6 +169,15 @@ pub struct ModEventMuteReporterData {
     pub duration_in_hours: core::option::Option<i64>,
 }
 pub type ModEventMuteReporter = crate::types::Object<ModEventMuteReporterData>;
+///Set priority score of the subject. Higher score means higher priority.
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct ModEventPriorityScoreData {
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub comment: core::option::Option<String>,
+    pub score: crate::types::LimitedU8<100u8>,
+}
+pub type ModEventPriorityScore = crate::types::Object<ModEventPriorityScoreData>;
 ///Report a subject
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
@@ -196,6 +233,9 @@ pub struct ModEventTakedownData {
     ///Indicates how long the takedown should be in effect before automatically expiring.
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub duration_in_hours: core::option::Option<i64>,
+    ///Names/Keywords of the policies that drove the decision.
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub policies: core::option::Option<Vec<String>>,
 }
 pub type ModEventTakedown = crate::types::Object<ModEventTakedownData>;
 ///Unmute action on a subject
@@ -312,6 +352,36 @@ pub struct RecordViewNotFoundData {
     pub uri: String,
 }
 pub type RecordViewNotFound = crate::types::Object<RecordViewNotFoundData>;
+///Statistics about a set of record subject items
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct RecordsStatsData {
+    ///Number of items that were appealed at least once
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub appealed_count: core::option::Option<i64>,
+    ///Number of items that were escalated at least once
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub escalated_count: core::option::Option<i64>,
+    ///Number of item currently in "reviewOpen" or "reviewEscalated" state
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub pending_count: core::option::Option<i64>,
+    ///Number of item currently in "reviewNone" or "reviewClosed" state
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub processed_count: core::option::Option<i64>,
+    ///Number of items that were reported at least once
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub reported_count: core::option::Option<i64>,
+    ///Total number of item in the set
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub subject_count: core::option::Option<i64>,
+    ///Number of item currently taken down
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub takendown_count: core::option::Option<i64>,
+    ///Cumulative sum of the number of reports on the items in the set
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub total_reports: core::option::Option<i64>,
+}
+pub type RecordsStats = crate::types::Object<RecordsStatsData>;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RepoViewData {
@@ -374,6 +444,28 @@ pub struct RepoViewNotFoundData {
     pub did: crate::types::string::Did,
 }
 pub type RepoViewNotFound = crate::types::Object<RepoViewNotFoundData>;
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct ReporterStatsData {
+    ///The total number of reports made by the user on accounts.
+    pub account_report_count: i64,
+    pub did: crate::types::string::Did,
+    ///The total number of accounts labeled as a result of the user's reports.
+    pub labeled_account_count: i64,
+    ///The total number of records labeled as a result of the user's reports.
+    pub labeled_record_count: i64,
+    ///The total number of reports made by the user on records.
+    pub record_report_count: i64,
+    ///The total number of accounts reported by the user.
+    pub reported_account_count: i64,
+    ///The total number of records reported by the user.
+    pub reported_record_count: i64,
+    ///The total number of accounts taken down as a result of the user's reports.
+    pub takendown_account_count: i64,
+    ///The total number of records taken down as a result of the user's reports.
+    pub takendown_record_count: i64,
+}
+pub type ReporterStats = crate::types::Object<ReporterStatsData>;
 ///Moderator review status of a subject: Closed. Indicates that the subject was already reviewed and resolved by a moderator
 pub const REVIEW_CLOSED: &str = "tools.ozone.moderation.defs#reviewClosed";
 ///Moderator review status of a subject: Escalated. Indicates that the subject was escalated for review by a moderator
@@ -386,6 +478,9 @@ pub type SubjectReviewState = String;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct SubjectStatusViewData {
+    ///Statistics related to the account subject
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub account_stats: core::option::Option<AccountStats>,
     ///True indicates that the a previously taken moderator action was appealed against, by the author of the content. False indicates last appeal was resolved by moderators.
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub appealed: core::option::Option<bool>,
@@ -410,6 +505,12 @@ pub struct SubjectStatusViewData {
     pub mute_reporting_until: core::option::Option<crate::types::string::Datetime>,
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
     pub mute_until: core::option::Option<crate::types::string::Datetime>,
+    ///Numeric value representing the level of priority. Higher score means higher priority.
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub priority_score: core::option::Option<crate::types::LimitedU8<100u8>>,
+    ///Statistics related to the record subjects authored by the subject's account
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub records_stats: core::option::Option<RecordsStats>,
     pub review_state: SubjectReviewState,
     pub subject: crate::types::Union<SubjectStatusViewSubjectRefs>,
     #[serde(skip_serializing_if = "core::option::Option::is_none")]
@@ -426,6 +527,22 @@ pub struct SubjectStatusViewData {
     pub updated_at: crate::types::string::Datetime,
 }
 pub type SubjectStatusView = crate::types::Object<SubjectStatusViewData>;
+///Detailed view of a subject. For record subjects, the author's repo and profile will be returned.
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct SubjectViewData {
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub profile: core::option::Option<crate::types::Union<SubjectViewProfileRefs>>,
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub record: core::option::Option<RecordViewDetail>,
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub repo: core::option::Option<RepoViewDetail>,
+    #[serde(skip_serializing_if = "core::option::Option::is_none")]
+    pub status: core::option::Option<SubjectStatusView>,
+    pub subject: String,
+    pub r#type: crate::com::atproto::moderation::defs::SubjectType,
+}
+pub type SubjectView = crate::types::Object<SubjectViewData>;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct VideoDetailsData {
@@ -481,6 +598,8 @@ pub enum ModEventViewDetailEventRefs {
     IdentityEvent(Box<IdentityEvent>),
     #[serde(rename = "tools.ozone.moderation.defs#recordEvent")]
     RecordEvent(Box<RecordEvent>),
+    #[serde(rename = "tools.ozone.moderation.defs#modEventPriorityScore")]
+    ModEventPriorityScore(Box<ModEventPriorityScore>),
 }
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "$type")]
@@ -533,6 +652,8 @@ pub enum ModEventViewEventRefs {
     IdentityEvent(Box<IdentityEvent>),
     #[serde(rename = "tools.ozone.moderation.defs#recordEvent")]
     RecordEvent(Box<RecordEvent>),
+    #[serde(rename = "tools.ozone.moderation.defs#modEventPriorityScore")]
+    ModEventPriorityScore(Box<ModEventPriorityScore>),
 }
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(tag = "$type")]
@@ -560,3 +681,6 @@ pub enum SubjectStatusViewSubjectRefs {
     #[serde(rename = "com.atproto.repo.strongRef")]
     ComAtprotoRepoStrongRefMain(Box<crate::com::atproto::repo::strong_ref::Main>),
 }
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(tag = "$type")]
+pub enum SubjectViewProfileRefs {}

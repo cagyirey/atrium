@@ -1,6 +1,6 @@
 [package]
 name = "atrium-api"
-version = "0.24.8"
+version = "0.25.5"
 authors = ["sugyan <sugi1982+github@gmail.com>"]
 edition.workspace = true
 rust-version.workspace = true
@@ -12,6 +12,7 @@ license.workspace = true
 keywords.workspace = true
 
 [dependencies]
+atrium-common.workspace = true
 atrium-xrpc.workspace = true
 chrono = { workspace = true, features = ["serde"] }
 http.workspace = true
@@ -37,6 +38,7 @@ namespace-toolsozone = []
 [dev-dependencies]
 atrium-xrpc-client.workspace = true
 futures.workspace = true
+serde_html_form.workspace = true
 serde_ipld_dagcbor.workspace = true
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]

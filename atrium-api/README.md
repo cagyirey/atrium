@@ -2,8 +2,8 @@
 
 [![](https://img.shields.io/crates/v/atrium-api)](https://crates.io/crates/atrium-api)
 [![](https://img.shields.io/docsrs/atrium-api)](https://docs.rs/atrium-api)
-[![](https://img.shields.io/crates/l/atrium-api)](https://github.com/sugyan/atrium/blob/main/LICENSE)
-[![Rust](https://github.com/sugyan/atrium/actions/workflows/api.yml/badge.svg?branch=main)](https://github.com/sugyan/atrium/actions/workflows/api.yml)
+[![](https://img.shields.io/crates/l/atrium-api)](https://github.com/atrium-rs/atrium/blob/main/LICENSE)
+[![Rust](https://github.com/atrium-rs/atrium/actions/workflows/api.yml/badge.svg?branch=main)](https://github.com/atrium-rs/atrium/actions/workflows/api.yml)
 
 ATrium API is a Rust library that includes the definitions of XRPC requests and their associated input/output model types. These codes are generated from the Lexicon schema on [atproto.com](https://atproto.com/).
 
@@ -29,6 +29,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 auth_factor_token: None,
                 identifier: "alice@mail.com".into(),
                 password: "hunter2".into(),
+                allow_takendown: None,
             }
             .into(),
         )
@@ -43,7 +44,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 While `AtpServiceClient` can be used for simple XRPC calls, it is better to use `AtpAgent`, which has practical features such as session management.
 
 ```rust,no_run
-use atrium_api::agent::{store::MemorySessionStore, AtpAgent};
+use atrium_api::agent::atp_agent::{store::MemorySessionStore, AtpAgent};
 use atrium_xrpc_client::reqwest::ReqwestClient;
 
 #[tokio::main]
